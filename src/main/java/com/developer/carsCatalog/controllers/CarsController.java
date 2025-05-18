@@ -3,15 +3,15 @@ package com.developer.carsCatalog.controllers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,10 +19,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.developer.carsCatalog.entities.Cars;
+import com.developer.carsCatalog.exceptions.InvalidDataException;
+import com.developer.carsCatalog.exceptions.MakeNotFoundException;
+import com.developer.carsCatalog.exceptions.validation.InvalidCarChassiException;
+import com.developer.carsCatalog.exceptions.validation.InvalidCarMakeException;
+import com.developer.carsCatalog.exceptions.validation.InvalidCarModelException;
+import com.developer.carsCatalog.exceptions.validation.InvalidCarYearException;
 import com.developer.carsCatalog.services.CarsService;
 
 @RestController
@@ -36,11 +41,40 @@ public class CarsController {
 	CarsService carsService;
 
 	@PostMapping("/save")
-	public ResponseEntity<Cars> saveCar(@RequestBody Cars carDetails) {
-		Cars  saveCar = carsService.saveCar(carDetails);
-		return ResponseEntity.ok(saveCar);
+	public ResponseEntity<Map<String, Object>> saveCar(@RequestBody Cars carDetails) {
+		Map<String, Object> response = new HashMap<>();
+		
+		try {
+			Cars  savedCar = carsService.saveCar(carDetails);
+			response.put("message", "Veículo salvo com sucesso");
+			response.put("car", savedCar);
+			return ResponseEntity.status(HttpStatus.CREATED).body(response);
+			
+		}catch(InvalidCarModelException e) {
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+		}catch(InvalidCarYearException e){
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+				
+		}catch(InvalidCarChassiException e) {
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+		}catch(InvalidCarMakeException e) {
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+		}
+		
+		
+		
+		}
+			
 
-	}
+	
 
 	
 	@GetMapping("/all")
@@ -58,15 +92,41 @@ public class CarsController {
 	}
 
 	@PutMapping("/update/{id}")
-	public ResponseEntity<Map<String, String>> upDateCar(@PathVariable Long id, @RequestBody Cars carDetails) {
-		Map<String, String> message = carsService.upDateCar(carDetails, id);
-		return ResponseEntity.ok(message);
-
+	public ResponseEntity<Map<String, Object>> upDateCar(@PathVariable Long id, @RequestBody Cars carDetails) {
+		Map<String, Object> response = new HashMap<>();
+		
+		try {
+			Cars updatedCar = carsService.upDateCar(carDetails, id);
+			response.put("message", "Veículo atualizado com sucesso!");
+			response.put("car", updatedCar);
+			return ResponseEntity.ok(response);
+			
+		}catch(InvalidCarModelException e) {
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+		}catch(InvalidCarYearException e){
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+				
+		}catch(InvalidCarChassiException e) {
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+		}catch(InvalidCarMakeException e) {
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+		}
+		 
 	}
 
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<Map<String, String>> deleteCar(@PathVariable Long id) {
-		Map<String, String> response = carsService.deleteById(id);
+	public ResponseEntity<Map<String, Object>> deleteCar(@PathVariable Long id) {
+		carsService.deleteById(id);
+		Map<String, Object> response = new HashMap<>();
+;		response.put("message", "Veículo deletado com sucesso!");
 
 		return ResponseEntity.ok(response); // Retorna HTTP 200 com confirmação
 	}

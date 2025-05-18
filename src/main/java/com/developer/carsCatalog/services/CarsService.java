@@ -1,11 +1,10 @@
 package com.developer.carsCatalog.services;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.developer.carsCatalog.entities.Cars;
 import com.developer.carsCatalog.entities.Make;
 import com.developer.carsCatalog.exceptions.CarNotFoundException;
+import com.developer.carsCatalog.exceptions.InvalidDataException;
+import com.developer.carsCatalog.exceptions.MakeNotFoundException;
+import com.developer.carsCatalog.exceptions.validation.InvalidCarChassiException;
+import com.developer.carsCatalog.exceptions.validation.InvalidCarMakeException;
+import com.developer.carsCatalog.exceptions.validation.InvalidCarModelException;
+import com.developer.carsCatalog.exceptions.validation.InvalidCarYearException;
 import com.developer.carsCatalog.repositories.CarsRepository;
+import com.developer.carsCatalog.repositories.MakeRepository;
+import com.developer.carsCatalog.utils.CarValidationMessages;
 
 
 @Service
@@ -28,21 +35,20 @@ public class CarsService {
 	CarsRepository carsRepository;
 	
 	@Autowired
+	MakeRepository makeRepository;
+	
+	@Autowired
 	MakeService makeService;
+
 	
 
-	@Transactional
+
 	public Cars saveCar(Cars car) {
 		logger.info("Tentativa de salvar veículo");
 		
-		logger.info("Carro recebido para salvar" + car);
-		logger.info("Id do veículo antes de salvar" + car.getId());
 		
-		validateCar(car);
-		if(car.getMake() != null) {
-			 Make savedMake = makeService.findByNameOrCreate(car.getMake());
-			 car.setMake(savedMake);
-		}
+		List<Cars> carsList = carsRepository.findAll();
+		validateCar(car, carsList);
 		
 		Cars savedCar = carsRepository.save(car);
 		logger.info("Carro salvo com sucesso.ID gerado" + savedCar.getId());
@@ -63,34 +69,35 @@ public class CarsService {
 	}
 
 	@Transactional
-	public Map<String, String> upDateCar(Cars car, Long id) {
+	public Cars upDateCar(Cars car, Long id) {
 		logger.info("Tentando atualizar carro com ID: " + id);
 		Cars existingCar = findByIdOrThrow(id);
 
 		if (!existingCar.getChassi().equals(car.getChassi())) {
-			throw new IllegalArgumentException("O número do chassi não pode ser alterado");
+			throw new InvalidCarChassiException(CarValidationMessages.INVALID_CHANGE_CHASSI.getMessage());
 		}
 
 		existingCar.setModel(car.getModel());
 		existingCar.setYears(car.getYears());
 		existingCar.setPrice(car.getPrice());
 
-		// incluir outras regras que possam mudar na atualização
+		//filtrar para a listagem carregada saiba que o carro existe e só está atualizando alguns dados
+		List<Cars> carsList = findAll()
+				.stream()
+				.filter(c -> !c.getId().equals(existingCar.getId()))
+				.collect(Collectors.toList());
 
-		validateCar(existingCar);
-		//carsRepository.save(existingCar);
+		validateCar(existingCar, carsList);
 		
-		Map<String, String> response = new HashMap<>();
-		response.put("message", "Veículo atualizado com sucesso!");
-		return response;
+		return carsRepository.save(existingCar);
+		
 	}
 
-	public Map<String, String> deleteById(Long id) {
+	public void deleteById(Long id) {
 		findByIdOrThrow(id);
 		carsRepository.deleteById(id);
-		Map<String, String> response = new HashMap<>();
-		response.put("message", "Carro detetado com sucesso!");
-		return response;
+	
+		
 	}
 
 //	public List<Cars> findByModel(String model){
@@ -107,37 +114,35 @@ public class CarsService {
 //		return this.carsRepository.findByCarsYears(years);
 //		
 //	}
-	public void validateCar(Cars car) {
+	public void validateCar(Cars car, List<Cars> carsList) {
 		if (car.getModel() == null || car.getModel().isEmpty()) {
-			throw new IllegalArgumentException("O campo modelo é obrigatório");
+			throw new InvalidCarModelException(CarValidationMessages.INVALID_MODEL.getMessage());
 
 		}
 		int currentYear = LocalDate.now().getYear();
 		if (car.getYears() < 1900 || car.getYears() > currentYear) {
-			throw new IllegalArgumentException("Ano do veículo inválido");
+			throw new InvalidCarYearException(CarValidationMessages.INVALID_YEAR.getMessage());
 
 		}
 
 		if (car.getChassi() == null || car.getChassi().length() != 17) {
-			throw new IllegalArgumentException("Número de chassi inválido");
+			throw new InvalidCarChassiException(CarValidationMessages.INVALID_CHASSI_ERROR.getMessage());
 		}
 		
 	    if (car.getMake() == null || car.getMake().getName() == null || car.getMake().getName().isEmpty()) {
-	        throw new IllegalArgumentException("A marca do carro é obrigatória");
+	        throw new InvalidCarMakeException(CarValidationMessages.INVALID_MAKE.getMessage());
 	    }
 
-        
-			if(car.getId() != null) {
-		      Cars existingCar = findByIdOrThrow(car.getId());
-		       if (!existingCar.getChassi().equals(car.getChassi())) {
-		           Optional<Cars> existingCarWithSameChassi = carsRepository.findByChassi(car.getChassi());
-		           if (existingCarWithSameChassi.isPresent() &&
-		               !existingCarWithSameChassi.get().getId().equals(car.getId())) {
-		               throw new IllegalArgumentException("Chassi já existente para outro veículo");
-		           }
-		       }
-		      
-			}
+
+	   
+	    boolean existingCarWithSameChassi = carsList.stream()
+	    		.anyMatch(existingCar -> existingCar.getChassi().equals(car.getChassi()));
+	    				
+
+       if(existingCarWithSameChassi) {
+    	   throw new InvalidCarChassiException(CarValidationMessages.INVALID_CHASSI.getMessage());
+       }
+			
 			
 	}
 
@@ -160,5 +165,5 @@ public class CarsService {
 //		
 //	}
 
-	}
-
+	
+}
