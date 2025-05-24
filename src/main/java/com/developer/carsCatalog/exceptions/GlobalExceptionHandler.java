@@ -80,6 +80,19 @@ public class GlobalExceptionHandler {
 		
 	}
 	
+	@ExceptionHandler(ItemNotFoundException.class)
+	public ResponseEntity<Map<String, String>> handleItemNotFoundException(ItemNotFoundException ex){
+		return buildResponse(ex, HttpStatus.NOT_FOUND);
+		
+	}
+	
+	@ExceptionHandler( BadRequestException.class)
+	public ResponseEntity<Map<String, String>> handleBadRequestException( BadRequestException ex){
+		return buildResponse(ex, HttpStatus.BAD_REQUEST);
+		
+	}
+	
+	
 	
 	
 	
