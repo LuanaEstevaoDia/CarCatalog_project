@@ -13,6 +13,8 @@ import com.developer.carsCatalog.exceptions.validation.InvalidCarChassiException
 import com.developer.carsCatalog.exceptions.validation.InvalidCarMakeException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarModelException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarYearException;
+import com.developer.carsCatalog.exceptions.validation.invalidateChassisByQuantityAndCharacter;
+import com.developer.carsCatalog.exceptions.validation.invalidateDuplicateChassisCarException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -29,12 +31,6 @@ public class GlobalExceptionHandler {
 		return buildResponse(ex, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(DuplicateKeyException.class)
-	public ResponseEntity<Map<String, String>> handleDuplicateKeyException(DuplicateKeyException ex) {
-		return buildResponse(ex, HttpStatus.CONFLICT);
-		
-	}
-	
 	@ExceptionHandler(CarNotFoundException.class)
 	public ResponseEntity<Map<String, String>> handleCarNotFoundException(CarNotFoundException ex){
 		return buildResponse(ex, HttpStatus.NOT_FOUND);
@@ -68,11 +64,14 @@ public class GlobalExceptionHandler {
 		
 	}
 	
-	@ExceptionHandler(InvalidCarChassiException.class)
-	public ResponseEntity<Map<String, String>> handleInvalidCarChassiException(InvalidCarChassiException ex){
-		return buildResponse(ex, HttpStatus.BAD_REQUEST);
-		
-	}
+	
+	  @ExceptionHandler(InvalidCarChassiException.class) public
+	  ResponseEntity<Map<String, String>>
+	  handleInvalidCarChassiException(InvalidCarChassiException ex){ return
+	  buildResponse(ex, HttpStatus.BAD_REQUEST);
+	  
+	  }
+	 
 	
 	@ExceptionHandler(InvalidCarMakeException.class)
 	public ResponseEntity<Map<String, String>> handleInvalidCarMakeException(InvalidCarMakeException ex){
@@ -91,6 +90,19 @@ public class GlobalExceptionHandler {
 		return buildResponse(ex, HttpStatus.BAD_REQUEST);
 		
 	}
+	
+
+	@ExceptionHandler(invalidateDuplicateChassisCarException.class)
+	public ResponseEntity<Map<String, String>> handleinvalidateDuplicateChassisCarException(invalidateDuplicateChassisCarException ex) {
+		return buildResponse(ex, HttpStatus.CONFLICT);
+		
+	}
+	@ExceptionHandler(invalidateChassisByQuantityAndCharacter.class)
+	public ResponseEntity<Map<String, String>> handleinvalidateChassisByQuantityAndCharacter(invalidateChassisByQuantityAndCharacter ex) {
+		return buildResponse(ex, HttpStatus.BAD_REQUEST);
+		
+	}
+	
 	
 	
 	

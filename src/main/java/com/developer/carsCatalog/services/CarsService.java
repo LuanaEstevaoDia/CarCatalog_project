@@ -21,6 +21,8 @@ import com.developer.carsCatalog.exceptions.validation.InvalidCarChassiException
 import com.developer.carsCatalog.exceptions.validation.InvalidCarMakeException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarModelException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarYearException;
+import com.developer.carsCatalog.exceptions.validation.invalidateChassisByQuantityAndCharacter;
+import com.developer.carsCatalog.exceptions.validation.invalidateDuplicateChassisCarException;
 import com.developer.carsCatalog.repositories.CarsRepository;
 import com.developer.carsCatalog.repositories.MakeRepository;
 import com.developer.carsCatalog.utils.CarValidationMessages;
@@ -99,21 +101,6 @@ public class CarsService {
 	
 		
 	}
-
-//	public List<Cars> findByModel(String model){
-//		return this.carsRepository.findByModel(model);
-//		
-//	}
-//	public List<Cars> findByMake(Long idMake){
-//		Make make = new Make();
-//		make.setId(idMake);
-//		return this.carsRepository.findByMake(make);
-//}
-//
-//	public List<Cars> findByCarsYears(int years){
-//		return this.carsRepository.findByCarsYears(years);
-//		
-//	}
 	public void validateCar(Cars car, List<Cars> carsList) {
 		if (car.getModel() == null || car.getModel().isEmpty()) {
 			throw new InvalidCarModelException(CarValidationMessages.INVALID_MODEL.getMessage());
@@ -126,7 +113,7 @@ public class CarsService {
 		}
 
 		if (car.getChassi() == null || car.getChassi().length() != 17) {
-			throw new InvalidCarChassiException(CarValidationMessages.INVALID_CHASSI_ERROR.getMessage());
+			throw new invalidateChassisByQuantityAndCharacter(CarValidationMessages.INVALID_CHASSI_ERROR.getMessage());
 		}
 		
 	    if (car.getMake() == null || car.getMake().getName() == null || car.getMake().getName().isEmpty()) {
@@ -140,7 +127,7 @@ public class CarsService {
 	    				
 
        if(existingCarWithSameChassi) {
-    	   throw new InvalidCarChassiException(CarValidationMessages.INVALID_CHASSI.getMessage());
+    	   throw new invalidateDuplicateChassisCarException(CarValidationMessages.INVALID_CHASSI.getMessage());
        }
 			
 			
