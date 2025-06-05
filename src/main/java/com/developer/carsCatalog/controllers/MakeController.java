@@ -7,7 +7,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,10 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.developer.carsCatalog.entities.Cars;
+
 import com.developer.carsCatalog.entities.Make;
-import com.developer.carsCatalog.exceptions.InvalidDataException;
 import com.developer.carsCatalog.exceptions.MakeNotFoundException;
+import com.developer.carsCatalog.exceptions.validation.InvalidCnpjException;
+import com.developer.carsCatalog.exceptions.validation.invalidMakeNameException;
 import com.developer.carsCatalog.services.MakeService;
 
 @RequestMapping("/make")
@@ -41,9 +41,13 @@ public class MakeController {
 			response.put("make", savedMake);
 			return ResponseEntity.ok(response);
 			
-		}catch(InvalidDataException e) {
+		}catch(invalidMakeNameException e) {
 			response.put("message", e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+		}catch(InvalidCnpjException e) {
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
 		}
 	}
 	
@@ -80,12 +84,7 @@ public class MakeController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 			
 			
-		}catch(IllegalStateException e) {
-			response.put("message", e.getMessage());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-			
 		}
-		
 		
 		
 	}

@@ -1,9 +1,7 @@
 package com.developer.carsCatalog.services;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -13,10 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.developer.carsCatalog.entities.Cars;
-import com.developer.carsCatalog.entities.Make;
 import com.developer.carsCatalog.exceptions.CarNotFoundException;
-import com.developer.carsCatalog.exceptions.InvalidDataException;
-import com.developer.carsCatalog.exceptions.MakeNotFoundException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarChassiException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarMakeException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarModelException;
@@ -67,7 +62,7 @@ public class CarsService {
 
 	public Cars findByIdOrThrow(Long id) {
 		return carsRepository.findById(id)
-				.orElseThrow(() -> new CarNotFoundException("Carro não encontrado com o ID: " + id));
+				.orElseThrow(() -> new CarNotFoundException(CarValidationMessages.CAR_NOT_FOUND.getMessage() + id));
 	}
 
 	@Transactional

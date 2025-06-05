@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.developer.carsCatalog.entities.Make;
-import com.developer.carsCatalog.exceptions.InvalidDataException;
+import com.developer.carsCatalog.exceptions.MakeConflictException;
 import com.developer.carsCatalog.exceptions.MakeNotFoundException;
+import com.developer.carsCatalog.exceptions.validation.InvalidCnpjException;
+import com.developer.carsCatalog.exceptions.validation.invalidMakeNameException;
 import com.developer.carsCatalog.repositories.CarsRepository;
 import com.developer.carsCatalog.repositories.MakeRepository;
+import com.developer.carsCatalog.utils.MakeValidationMessage;
 
 @Service
 public class MakeService {
@@ -31,7 +34,7 @@ public class MakeService {
 	
 	public Make findByNameOrCreate(Make  make) {
 		if(make.getName()== null || make.getName().isEmpty()){
-			throw new InvalidDataException("O Nome da marca é obrigatório");
+			throw new invalidMakeNameException(MakeValidationMessage.INVALID_NAME.getMessage());
 			
 		}
 		
@@ -48,19 +51,19 @@ public class MakeService {
 	
 	public Make findByIdOrThrow(Long id){
 		return makeRepository.findById(id)
-				.orElseThrow(() -> new MakeNotFoundException("Marca não encontrada com o Id" + id));
+				.orElseThrow(() -> new MakeNotFoundException(MakeValidationMessage.MAKE_NOT_FOUND.getMessage() + id));
 		
 	}
 	@Transactional
 	public Make updateMake(Long id, Make updatedMake) {
 		// Verifica se a marca existe
         Make existingMake = makeRepository.findById(id)
-                .orElseThrow(() -> new MakeNotFoundException("Marca não encontrada"));
+                .orElseThrow(() -> new MakeNotFoundException(MakeValidationMessage.MAKE_NOT_FOUND.getMessage()));
 
         // Verifica se há algum veículo vinculado a essa marca
         boolean isLinkedToCar = carsRepository.existsByMakeId(id); 
         if (isLinkedToCar) {
-            throw new  IllegalStateException("A marca não pode ser alterada porque já está vinculada a um veículo.");
+            throw new  MakeConflictException(MakeValidationMessage.MAKE_CONFLICT.getMessage());
         }
 
         // Atualiza os dados da marca
@@ -82,7 +85,7 @@ public class MakeService {
 	
 	private String validateCnpj(String cnpj) {
 	if(cnpj == null || !cnpj.matches("\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}")) {
-		throw new InvalidDataException("CNPJ inválido. Deve conter 14 dígitos númericos.");
+		throw new InvalidCnpjException(MakeValidationMessage.CNPJ_INVALID_FORMAT.getMessage());
 	}
 	return cnpj;
 	}
