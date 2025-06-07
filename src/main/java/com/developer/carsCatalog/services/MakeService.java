@@ -11,13 +11,15 @@ import com.developer.carsCatalog.entities.Make;
 import com.developer.carsCatalog.exceptions.MakeConflictException;
 import com.developer.carsCatalog.exceptions.MakeNotFoundException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCnpjException;
-import com.developer.carsCatalog.exceptions.validation.invalidMakeNameException;
+import com.developer.carsCatalog.exceptions.validation.InvalidMakeNameException;
+import com.developer.carsCatalog.exceptions.validation.InvalidateMakeRegisteredNameException;
 import com.developer.carsCatalog.repositories.CarsRepository;
 import com.developer.carsCatalog.repositories.MakeRepository;
 import com.developer.carsCatalog.utils.MakeValidationMessage;
 
 @Service
 public class MakeService {
+
 
 	@Autowired
 	private MakeRepository makeRepository;
@@ -32,18 +34,20 @@ public class MakeService {
     }
 
 	
-	public Make findByNameOrCreate(Make  make) {
-		if(make.getName()== null || make.getName().isEmpty()){
-			throw new invalidMakeNameException(MakeValidationMessage.INVALID_NAME.getMessage());
+	public Make findByNameOrCreate(Make make) {
+		
+		if(make.getName() == null || make.getName().isEmpty()) {
+			throw new InvalidMakeNameException(MakeValidationMessage.INVALID_NAME.getMessage());
+		}
+		invalidateIfMakeAlreadyExists(make);
+		validateCnpj(make.getCnpj());
+		
+		
+		return makeRepository.save(make);
 			
 		}
 		
-		validateCnpj(make.getCnpj());
-		Optional<Make> existingMake = makeRepository.findByName(make.getName());
-		return existingMake.orElseGet(() -> makeRepository.save(make));
 		
-	}
-	
 	public List<Make> findAll(){
 		return makeRepository.findAll();
 		
@@ -60,13 +64,10 @@ public class MakeService {
         Make existingMake = makeRepository.findById(id)
                 .orElseThrow(() -> new MakeNotFoundException(MakeValidationMessage.MAKE_NOT_FOUND.getMessage()));
 
-        // Verifica se há algum veículo vinculado a essa marca
-        boolean isLinkedToCar = carsRepository.existsByMakeId(id); 
-        if (isLinkedToCar) {
-            throw new  MakeConflictException(MakeValidationMessage.MAKE_CONFLICT.getMessage());
-        }
+    
+        deleteOrUpdateMakeLinkedToCar(id);
 
-        // Atualiza os dados da marca
+       
         existingMake.setName(updatedMake.getName());
         validateCnpj(updatedMake.getCnpj());
         existingMake.setCnpj(updatedMake.getCnpj());
@@ -79,6 +80,7 @@ public class MakeService {
 	
 	public void delete(Long id) {
 		findByIdOrThrow(id);
+		deleteOrUpdateMakeLinkedToCar(id);
 		makeRepository.deleteById(id);
 		
 	}
@@ -88,6 +90,31 @@ public class MakeService {
 		throw new InvalidCnpjException(MakeValidationMessage.CNPJ_INVALID_FORMAT.getMessage());
 	}
 	return cnpj;
+	}
+	
+	private void invalidateIfMakeAlreadyExists(Make make) {
+		
+
+	      Optional<Make> registeredName = makeRepository.findByName(make.getName());
+	      
+
+	    if (registeredName.isPresent() ) {  
+	        throw new InvalidateMakeRegisteredNameException(MakeValidationMessage.DUPLICATE_MAKE_NAME.getMessage());
+	    }
+	    
+
+		
+	}
+	
+	public void deleteOrUpdateMakeLinkedToCar(Long makeId) {
+		
+		 boolean isLinkedToCar = carsRepository.existsByMakeId(makeId);
+		 
+		 if (isLinkedToCar) {
+	            throw new  MakeConflictException(MakeValidationMessage.MAKE_CONFLICT.getMessage());
+	        }
+		 
+		
 	}
 
 } 

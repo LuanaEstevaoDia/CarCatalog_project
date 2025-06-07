@@ -14,9 +14,10 @@ import com.developer.carsCatalog.exceptions.validation.InvalidCarMakeException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarModelException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarYearException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCnpjException;
-import com.developer.carsCatalog.exceptions.validation.invalidMakeNameException;
-import com.developer.carsCatalog.exceptions.validation.invalidateChassisByQuantityAndCharacter;
-import com.developer.carsCatalog.exceptions.validation.invalidateDuplicateChassisCarException;
+import com.developer.carsCatalog.exceptions.validation.InvalidateMakeRegisteredNameException;
+import com.developer.carsCatalog.exceptions.validation.InvalidMakeNameException;
+import com.developer.carsCatalog.exceptions.validation.InvalidateChassisByQuantityAndCharacter;
+import com.developer.carsCatalog.exceptions.validation.InvalidateDuplicateChassisCarException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -86,18 +87,18 @@ public class GlobalExceptionHandler {
 	}
 	
 
-	@ExceptionHandler(invalidateDuplicateChassisCarException.class)
-	public ResponseEntity<Map<String, String>> handleinvalidateDuplicateChassisCarException(invalidateDuplicateChassisCarException ex) {
+	@ExceptionHandler(InvalidateDuplicateChassisCarException.class)
+	public ResponseEntity<Map<String, String>> handleinvalidateDuplicateChassisCarException(InvalidateDuplicateChassisCarException ex) {
 		return buildResponse(ex, HttpStatus.CONFLICT);
 		
 	}
-	@ExceptionHandler(invalidateChassisByQuantityAndCharacter.class)
-	public ResponseEntity<Map<String, String>> handleinvalidateChassisByQuantityAndCharacter(invalidateChassisByQuantityAndCharacter ex) {
+	@ExceptionHandler(InvalidateChassisByQuantityAndCharacter.class)
+	public ResponseEntity<Map<String, String>> handleinvalidateChassisByQuantityAndCharacter(InvalidateChassisByQuantityAndCharacter ex) {
 		return buildResponse(ex, HttpStatus.BAD_REQUEST);
 		
 	}
-	@ExceptionHandler(invalidMakeNameException.class)
-	public ResponseEntity<Map<String, String>> handleInvalidMakeNameException(invalidMakeNameException ex){
+	@ExceptionHandler(InvalidMakeNameException.class)
+	public ResponseEntity<Map<String, String>> handleInvalidMakeNameException(InvalidMakeNameException ex){
 		return buildResponse(ex, HttpStatus.BAD_REQUEST);
 		
 	}
@@ -111,7 +112,10 @@ public class GlobalExceptionHandler {
 		return buildResponse(ex, HttpStatus.UNPROCESSABLE_ENTITY);
 	}
 	
-	
+	@ExceptionHandler(InvalidateMakeRegisteredNameException.class)
+	public ResponseEntity<Map<String, String>> handleInvalidateMakeRegisteredNameException(InvalidateMakeRegisteredNameException ex){
+		return buildResponse(ex, HttpStatus.CONFLICT);
+	}
 	
 
 }

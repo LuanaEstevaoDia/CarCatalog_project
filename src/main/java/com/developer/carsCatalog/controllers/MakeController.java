@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.developer.carsCatalog.entities.Make;
 import com.developer.carsCatalog.exceptions.MakeNotFoundException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCnpjException;
-import com.developer.carsCatalog.exceptions.validation.invalidMakeNameException;
+import com.developer.carsCatalog.exceptions.validation.InvalidMakeNameException;
 import com.developer.carsCatalog.services.MakeService;
 
 @RequestMapping("/make")
@@ -41,7 +41,7 @@ public class MakeController {
 			response.put("make", savedMake);
 			return ResponseEntity.ok(response);
 			
-		}catch(invalidMakeNameException e) {
+		}catch(InvalidMakeNameException e) {
 			response.put("message", e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 			

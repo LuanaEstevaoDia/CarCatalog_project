@@ -18,8 +18,8 @@ import com.developer.carsCatalog.entities.Cars;
 import com.developer.carsCatalog.entities.Make;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarModelException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarYearException;
-import com.developer.carsCatalog.exceptions.validation.invalidateChassisByQuantityAndCharacter;
-import com.developer.carsCatalog.exceptions.validation.invalidateDuplicateChassisCarException;
+import com.developer.carsCatalog.exceptions.validation.InvalidateChassisByQuantityAndCharacter;
+import com.developer.carsCatalog.exceptions.validation.InvalidateDuplicateChassisCarException;
 import com.developer.carsCatalog.repositories.CarsRepository;
 import com.developer.carsCatalog.repositories.MakeRepository;
 import com.developer.carsCatalog.services.CarsService;
@@ -85,7 +85,7 @@ public class CarsServiceTest {
 
 		Cars car = Cars.builder().model("Corolla").years(2020).chassi("123456").make(make).build();
 
-		Exception exception = assertThrows(invalidateChassisByQuantityAndCharacter.class, () -> {
+		Exception exception = assertThrows(InvalidateChassisByQuantityAndCharacter.class, () -> {
 			carsService.validateCar(car, carsList);
 		});
 		assertEquals(CarValidationMessages.INVALID_CHASSI_ERROR.getMessage(), exception.getMessage());
@@ -102,7 +102,7 @@ public class CarsServiceTest {
 
 		carsList.add(car);
 
-		Exception exception = assertThrows(invalidateDuplicateChassisCarException.class, () -> {
+		Exception exception = assertThrows(InvalidateDuplicateChassisCarException.class, () -> {
 			carsService.validateCar(car, carsList);
 
 		});

@@ -16,8 +16,8 @@ import com.developer.carsCatalog.exceptions.validation.InvalidCarChassiException
 import com.developer.carsCatalog.exceptions.validation.InvalidCarMakeException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarModelException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarYearException;
-import com.developer.carsCatalog.exceptions.validation.invalidateChassisByQuantityAndCharacter;
-import com.developer.carsCatalog.exceptions.validation.invalidateDuplicateChassisCarException;
+import com.developer.carsCatalog.exceptions.validation.InvalidateChassisByQuantityAndCharacter;
+import com.developer.carsCatalog.exceptions.validation.InvalidateDuplicateChassisCarException;
 import com.developer.carsCatalog.repositories.CarsRepository;
 import com.developer.carsCatalog.repositories.MakeRepository;
 import com.developer.carsCatalog.utils.CarValidationMessages;
@@ -108,7 +108,7 @@ public class CarsService {
 		}
 
 		if (car.getChassi() == null || car.getChassi().length() != 17) {
-			throw new invalidateChassisByQuantityAndCharacter(CarValidationMessages.INVALID_CHASSI_ERROR.getMessage());
+			throw new InvalidateChassisByQuantityAndCharacter(CarValidationMessages.INVALID_CHASSI_ERROR.getMessage());
 		}
 		
 	    if (car.getMake() == null || car.getMake().getName() == null || car.getMake().getName().isEmpty()) {
@@ -122,7 +122,7 @@ public class CarsService {
 	    				
 
        if(existingCarWithSameChassi) {
-    	   throw new invalidateDuplicateChassisCarException(CarValidationMessages.INVALID_CHASSI.getMessage());
+    	   throw new InvalidateDuplicateChassisCarException(CarValidationMessages.INVALID_CHASSI.getMessage());
        }
 			
 			
