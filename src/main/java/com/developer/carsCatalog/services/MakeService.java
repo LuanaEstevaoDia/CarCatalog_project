@@ -99,7 +99,7 @@ public class MakeService {
 	      
 
 	    if (registeredName.isPresent() ) {  
-	        throw new InvalidateMakeRegisteredNameException(MakeValidationMessage.DUPLICATE_MAKE_NAME.getMessage());
+	        throw new InvalidateMakeRegisteredNameException(MakeValidationMessage.DUPLICATE_MAKE_NAME.getMessage(make.getName()));
 	    }
 	    
 

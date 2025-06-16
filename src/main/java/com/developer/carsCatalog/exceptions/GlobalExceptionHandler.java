@@ -14,6 +14,8 @@ import com.developer.carsCatalog.exceptions.validation.InvalidCarMakeException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarModelException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarYearException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCnpjException;
+import com.developer.carsCatalog.exceptions.validation.InvalidItemDescriptionException;
+import com.developer.carsCatalog.exceptions.validation.InvalidItemNameException;
 import com.developer.carsCatalog.exceptions.validation.InvalidateMakeRegisteredNameException;
 import com.developer.carsCatalog.exceptions.validation.InvalidMakeNameException;
 import com.developer.carsCatalog.exceptions.validation.InvalidateChassisByQuantityAndCharacter;
@@ -115,6 +117,18 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(InvalidateMakeRegisteredNameException.class)
 	public ResponseEntity<Map<String, String>> handleInvalidateMakeRegisteredNameException(InvalidateMakeRegisteredNameException ex){
 		return buildResponse(ex, HttpStatus.CONFLICT);
+	}
+	
+	@ExceptionHandler(InvalidItemNameException.class)
+	public ResponseEntity<Map<String, String>> handleInvalidItemNameException(InvalidItemNameException ex){
+		return buildResponse(ex, HttpStatus.BAD_REQUEST);
+		
+	}
+	
+	@ExceptionHandler(InvalidItemDescriptionException.class)
+	public ResponseEntity<Map<String, String>> handleInvalidItemDescriptionException(InvalidItemDescriptionException ex){
+		return buildResponse(ex, HttpStatus.BAD_REQUEST);
+		
 	}
 	
 

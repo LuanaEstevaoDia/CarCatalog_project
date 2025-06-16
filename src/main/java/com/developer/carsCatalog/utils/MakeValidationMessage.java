@@ -18,5 +18,10 @@ public enum MakeValidationMessage {
 	public String getMessage() {
 		return message;
 	}
+	
+	 public String getMessage(Object... args) {
+	        return String.format(message, args);
+	    }
+
 
 }

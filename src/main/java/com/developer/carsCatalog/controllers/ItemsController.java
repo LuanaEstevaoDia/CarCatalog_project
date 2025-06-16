@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.developer.carsCatalog.entities.Items;
+import com.developer.carsCatalog.exceptions.validation.InvalidItemDescriptionException;
+import com.developer.carsCatalog.exceptions.validation.InvalidItemNameException;
 import com.developer.carsCatalog.repositories.ItemsRepository;
 import com.developer.carsCatalog.services.ItemsService;
 
@@ -40,12 +43,22 @@ public class ItemsController {
 	ResponseEntity<Map<String, Object>> saveItem(@RequestBody Items itemDetails){
 		Map<String, Object> response = new HashMap<>();
 		
-		Items ItemSaved = itemsService.saveItem(itemDetails);
-		response.put("message", "Item salvo com sucesso!");
-		response.put("items", ItemSaved);
-		
-		return ResponseEntity.status(HttpStatus.OK).body(response);
-		
+		try {
+			Items ItemSaved = itemsService.saveItem(itemDetails);
+			response.put("message", "Item salvo com sucesso!");
+			response.put("items", ItemSaved);
+			
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+			
+		}catch(InvalidItemNameException e) {
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+		}catch(InvalidItemDescriptionException e) {
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+		}
 		
 	}
 	@GetMapping("/all")
@@ -68,12 +81,23 @@ public class ItemsController {
 	@PutMapping("/update/{id}")
 	ResponseEntity<Map<String, Object>> updateItem(@RequestBody Items item, @PathVariable Long id){
 		Map<String, Object> response = new HashMap<>();
-		Items updatedItem = itemsService.updateItems(item, id);
-		response.put("message", "Item atualizado com sucesso!");
-		response.put("item", updatedItem);
 		
-		return ResponseEntity.status(HttpStatus.OK).body(response);
-		
+		try {
+			Items updatedItem = itemsService.updateItems(item, id);
+			response.put("message", "Item atualizado com sucesso!");
+			response.put("item", updatedItem);
+			
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+			
+		}catch(InvalidItemNameException e) {
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+		}catch(InvalidItemDescriptionException e) {
+			response.put("message", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			
+		}
 		
 	}
 	
