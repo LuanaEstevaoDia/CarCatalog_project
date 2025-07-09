@@ -28,7 +28,4 @@ public class Items implements Serializable {
 	
 	private String name;
 	
-	@Column(columnDefinition = "TEXT")
-	private String description;
-
 }

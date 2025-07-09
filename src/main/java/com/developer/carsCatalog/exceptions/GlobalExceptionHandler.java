@@ -3,7 +3,7 @@ package com.developer.carsCatalog.exceptions;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.dao.DuplicateKeyException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,7 +14,6 @@ import com.developer.carsCatalog.exceptions.validation.InvalidCarMakeException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarModelException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCarYearException;
 import com.developer.carsCatalog.exceptions.validation.InvalidCnpjException;
-import com.developer.carsCatalog.exceptions.validation.InvalidItemDescriptionException;
 import com.developer.carsCatalog.exceptions.validation.InvalidItemNameException;
 import com.developer.carsCatalog.exceptions.validation.InvalidateMakeRegisteredNameException;
 import com.developer.carsCatalog.exceptions.validation.InvalidMakeNameException;
@@ -125,11 +124,6 @@ public class GlobalExceptionHandler {
 		
 	}
 	
-	@ExceptionHandler(InvalidItemDescriptionException.class)
-	public ResponseEntity<Map<String, String>> handleInvalidItemDescriptionException(InvalidItemDescriptionException ex){
-		return buildResponse(ex, HttpStatus.BAD_REQUEST);
-		
-	}
 	
 
 }

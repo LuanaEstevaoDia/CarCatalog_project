@@ -1,6 +1,6 @@
 package com.developer.carsCatalog.services;
 
-import java.io.Console;
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.developer.carsCatalog.entities.Items;
 import com.developer.carsCatalog.exceptions.ItemNotFoundException;
-import com.developer.carsCatalog.exceptions.validation.InvalidItemDescriptionException;
 import com.developer.carsCatalog.exceptions.validation.InvalidItemNameException;
 import com.developer.carsCatalog.repositories.ItemsRepository;
 import com.developer.carsCatalog.utils.ItemValidationMessages;
@@ -47,7 +46,6 @@ public class ItemsService {
 		Items existingItem = findByIdOrThrow(id);
 
 		existingItem.setName(item.getName());
-		existingItem.setDescription(item.getDescription());
 		validateItem(existingItem);
 
 		return itemsRepository.save(existingItem);
@@ -67,12 +65,7 @@ public class ItemsService {
 	  throw  new InvalidItemNameException(ItemValidationMessages.INVALID_ITEM_NAME.getMessage());
 		
 		
-	} if(item.getDescription() == null || item.getDescription().trim().isEmpty()){
-		
-		 throw  new InvalidItemDescriptionException(ItemValidationMessages.INVALID_ITEM_DESCRIPTION.getMessage());
-		
-	}
-	
+	} 
 
 }
 	

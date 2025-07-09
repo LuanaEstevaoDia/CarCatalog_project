@@ -6,10 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.developer.carsCatalog.entities.Items;
-import com.developer.carsCatalog.exceptions.validation.InvalidItemDescriptionException;
 import com.developer.carsCatalog.exceptions.validation.InvalidItemNameException;
 import com.developer.carsCatalog.repositories.ItemsRepository;
 import com.developer.carsCatalog.services.ItemsService;
@@ -51,10 +47,6 @@ public class ItemsController {
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 			
 		}catch(InvalidItemNameException e) {
-			response.put("message", e.getMessage());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-			
-		}catch(InvalidItemDescriptionException e) {
 			response.put("message", e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 			
@@ -93,12 +85,7 @@ public class ItemsController {
 			response.put("message", e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 			
-		}catch(InvalidItemDescriptionException e) {
-			response.put("message", e.getMessage());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-			
 		}
-		
 	}
 	
 	@DeleteMapping("/delete/{id}")

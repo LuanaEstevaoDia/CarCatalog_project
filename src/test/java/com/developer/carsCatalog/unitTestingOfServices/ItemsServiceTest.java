@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.description;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -17,14 +16,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.developer.carsCatalog.entities.Items;
-import com.developer.carsCatalog.entities.Make;
-import com.developer.carsCatalog.exceptions.validation.InvalidItemDescriptionException;
 import com.developer.carsCatalog.exceptions.validation.InvalidItemNameException;
-import com.developer.carsCatalog.exceptions.validation.InvalidMakeNameException;
 import com.developer.carsCatalog.repositories.ItemsRepository;
 import com.developer.carsCatalog.services.ItemsService;
 import com.developer.carsCatalog.utils.ItemValidationMessages;
-import com.developer.carsCatalog.utils.MakeValidationMessage;
+
 
 @ActiveProfiles("test")
 public class ItemsServiceTest {
@@ -47,7 +43,6 @@ public class ItemsServiceTest {
 		
 		Items items = Items.builder()
 				.name("AirBag")
-				.description("O airbag nada mais é do que uma espécie de almofada... ")
 				.build();
 		
 			when(itemsRepository.findByName("AirBag")).thenReturn(Optional.empty());
@@ -60,7 +55,7 @@ public class ItemsServiceTest {
 		   
 		    assertNotNull(savedItem);
 		    assertEquals("AirBag", savedItem.getName());
-		    assertEquals("O airbag nada mais é do que uma espécie de almofada... ", savedItem.getDescription());
+		   
 		
 	}
 	
@@ -70,13 +65,11 @@ public class ItemsServiceTest {
 		Items items = Items.builder()
 				.id(1L)
 				.name("AirBag")
-				.description("O airbag nada mais é do que uma espécie de almofada...")
 				.build();
 		
 		Items updateItems = items.builder()
 				.id(1L)
 				.name("AirBag")
-				.description("O airbag frontal e lateral para maior segurança...")
 				.build();
 		
 		 when(itemsRepository.findById(1L)).thenReturn(Optional.of(items));
@@ -89,7 +82,7 @@ public class ItemsServiceTest {
 		assertNotNull(resulUpdate);
 		assertEquals(1L, resulUpdate.getId());
 		assertEquals("AirBag", resulUpdate.getName());
-		assertEquals("O airbag frontal e lateral para maior segurança...", resulUpdate.getDescription());
+	
 		
 	}
 	
@@ -99,7 +92,6 @@ public class ItemsServiceTest {
 		 Items items = Items.builder()
 		    		.id(1L)
 		            .name(null)
-		            .description("O airbag frontal e lateral para maior segurança...") 
 		            .build();
 		
 
@@ -115,10 +107,9 @@ public class ItemsServiceTest {
 	public void shouldThrowExceptionWhenItemNameIsEmpty() {
 		
 		 Items items = Items.builder()
-		    		.id(1L)
-		            .name("")
-		            .description("O airbag frontal e lateral para maior segurança...") 
-		            .build();
+		    	   .id(1L)
+		           .name("")
+		           .build();
 		
 
 			Exception exception = assertThrows(InvalidItemNameException.class, () -> {
@@ -129,41 +120,8 @@ public class ItemsServiceTest {
 			assertEquals(ItemValidationMessages.INVALID_ITEM_NAME.getMessage(), exception.getMessage());
 	}
 	
-	@Test
-	public void shouldThrowExceptionWhenItemDescriptionIsNull() {
-		
-		 Items items = Items.builder()
-		    		.id(1L)
-		            .name("AirBag")
-		            .description(null) 
-		            .build();
-		
-
-			Exception exception = assertThrows(InvalidItemDescriptionException.class, () -> {
-				itemsService.saveItem(items);
-
-			});
-			
-			assertEquals(ItemValidationMessages.INVALID_ITEM_DESCRIPTION.getMessage(), exception.getMessage());
-	}
 	
-	@Test
-	public void shouldThrowExceptionWhenItemDescriptionIsEmpty() {
-		
-		 Items items = Items.builder()
-		    		.id(1L)
-		            .name("AirBag")
-		            .description("") 
-		            .build();
-		
-
-			Exception exception = assertThrows(InvalidItemDescriptionException.class, () -> {
-				itemsService.saveItem(items);
-
-			});
-			
-			assertEquals(ItemValidationMessages.INVALID_ITEM_DESCRIPTION.getMessage(), exception.getMessage());
-	}
+	
 	
 
 }
