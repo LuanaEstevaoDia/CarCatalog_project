@@ -48,14 +48,11 @@ public class Cars implements Serializable {
 	
 	@ManyToOne
 	private Make make;
-//
-//	@ManyToMany(cascade = CascadeType.ALL)
-//	@JoinTable(name="car_owners")
-//	private List<Owner> owners;
-//	
-  // public Make getMake() {
-    //	return make;
-   	
+	
+	@ManyToMany
+	@JoinTable(name="car_accessory")
+	private List<Items> items;
+
    
 	}
 //
